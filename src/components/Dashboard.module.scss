@@ -1,0 +1,263 @@
+.dahsboardHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  .dashboardCard {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    .leftCompContainer {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 35%;
+      height: 100%;
+      background-color: rgb(114, 97, 247);
+      .leftCardHeader {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+        > h3 {
+          color: #fff;
+        }
+        > span {
+          height: 120px;
+          width: 120px;
+          border-radius: 50%;
+          overflow: hidden;
+          > img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+          }
+        }
+        > h6 {
+          color: #fff;
+        }
+      }
+      .chatContainer {
+        margin-top: 10px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        .addChannelBox,
+        .channelistBox {
+          height: 100px;
+          width: 100%;
+          border-radius: 5px;
+          padding: 5px 7px;
+          object-fit: cover;
+          background-color: rgb(240, 222, 222);
+        }
+        .addChannelBox {
+          .channelBox {
+            position: relative;
+            > input {
+              height: 45px;
+              width: 100%;
+              padding-right: 40px;
+              border: none;
+              border-radius: 5px;
+              outline: 0;
+            }
+            .addIcon {
+              font-size: 30px;
+              cursor: pointer;
+              right: 5px;
+              top: 8px;
+              color: green;
+              position: absolute;
+            }
+          }
+        }
+      }
+      .lowerDashboard {
+        height: 80px;
+        background-color: aqua;
+        text-align: end;
+      }
+    }
+    .rightCompContainer {
+      width: 65%;
+      height: 100%;
+      background-color: rgb(240, 222, 222);
+      .chatContainer {
+        display: flex;
+        justify-content: space-between;
+        height: 100%;
+        flex-direction: column;
+        width: 100%;
+        .headerRight,
+        .lowerRight {
+          height: 80px;
+          width: 100%;
+          background-color: whitesmoke;
+        }
+        .headerRight {
+          display: flex;
+          justify-content: start;
+          align-items: center;
+          gap: 10px;
+          padding: 10px;
+          .userImgSpan {
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            > img {
+              height: 100%;
+              width: 100%;
+              object-fit: cover;
+            }
+          }
+          .activeUserChannelBox {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            align-items: start;
+            .activeChannelBox {
+              display: flex;
+              align-items: center;
+              justify-content: start;
+              gap: 5px;
+              .activeImg {
+                height: 10px;
+                width: 10px;
+                border-radius: 50%;
+              }
+              > h6 {
+                margin: 0;
+              }
+            }
+            .activeuserName {
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.adjustDrop {
+  height: 100px;
+  overflow-y: auto;
+}
+.headerRightBoxes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: whitesmoke;
+  padding-right: 10px;
+  cursor: pointer;
+  > :hover {
+    color: green;
+  }
+}
+.chatContainerBox {
+  height: calc(100vh - 160px);
+  width: 100%;
+  overflow: auto;
+  background-color: lightgray;
+  padding: 15px;
+  .chatImgTextBox {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    .userGoogleImg {
+      height: 40px;
+      width: 40px;
+      border-radius: 5px;
+      overflow: hidden;
+      > img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+    .anotherChatField {
+      min-height: 45px;
+      width: fit-content;
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      padding: 5px 7px;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+      background-color: #fff;
+    }
+  }
+  .anotherUserTextDiv {
+    display: flex;
+    align-items: center;
+    margin-left: 47px;
+    margin-bottom: 15px;
+    gap: 7px;
+    > h6 {
+      color: green;
+      font-size: 14px;
+      margin-bottom: 0;
+    }
+    .timeText {
+      font-size: 14px;
+      color: rgb(87, 85, 85);
+      margin-bottom: 0px;
+    }
+  }
+}
+.chatInputField {
+  height: 80px;
+  width: 100%;
+  background-color: whitesmoke;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 10px;
+  gap: 10px;
+  .smilyEmoji,
+  .sendEmoji {
+    font-size: 24px;
+    cursor: pointer;
+  }
+  > form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    > input {
+      width: 100%;
+      height: 50px;
+      border: none;
+      border-radius: 5px;
+      outline: 0;
+      padding: 0 5px;
+    }
+  }
+}
+@media (max-width: 400px) {
+  .dashboardCard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: auto !important;
+  }
+  .leftCompContainer {
+    width: 100% !important;
+  }
+  .rightCompContainer {
+    width: 100% !important;
+  }
+}
+.loadingDiv {
+  height: calc(100vh - 190px);
+}

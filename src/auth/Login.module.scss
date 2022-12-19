@@ -1,0 +1,28 @@
+.loginContainer{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+.formGroup{
+    width: 100%;
+}
+.inputFieldClass{
+    margin-bottom: 15px;
+}
+.loginCard{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.googleContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    background-color: aqua;
+    cursor: pointer;
+}
