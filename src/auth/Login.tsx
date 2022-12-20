@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./Login.module.scss";
 import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
@@ -12,22 +11,18 @@ import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
-  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import { UseFirebaseContextService } from "../firebase/FirebaseService";
 import { auth } from "../firebaseConfig";
 import { useDispatch, useSelector } from "react-redux/es/exports";
-import {
-  saveAuthToken,
-  storeGoogleCreds,
-} from "../slice/authSlice";
+import { saveAuthToken, storeGoogleCreds } from "../slice/authSlice";
 
 const Login = () => {
   const dispatch: any = useDispatch();
   const navigate = useNavigate();
   const auth = getAuth(); //don't use this auth use firebaseConfig auth in contextApi,use in direct
   const provider = new GoogleAuthProvider();
-  // const {signInWihGoogle}=UseFirebaseContextService();
 
   const initialValues = {
     email: "",
@@ -35,66 +30,64 @@ const Login = () => {
   };
   const schema = yup.object().shape({
     email: yup.string().email().required("Email is required "),
-    password: yup.string().min(5).required("Password is required "),
+    password: yup
+      .string()
+      .required("Password is required")
+      .min(8, "Password must be 8 characters long")
+      .matches(/[0-9]/, "Password requires a number")
+      .matches(/[a-z]/, "Password requires a lowercase letter")
+      .matches(/[A-Z]/, "Password requires an uppercase letter")
+      .matches(/[^\w]/, "Password requires a symbol"),
   });
-  const getpersistedToken = useSelector(
-    (state: any) => state.authSlice.authToken
-  );
+  // const getpersistedToken = useSelector(
+  //   (state: any) => state.authSlice.authToken
+  // );
   const submitForm = async (val: any, { resetForm }: any) => {
-    console.log(val);
-    toast.success("USer logged in successfully");
-    const result = await createUserWithEmailAndPassword(
-      auth,
-      val?.email,
-      val?.password
-    );
-    dispatch(saveAuthToken(result?.user?.email));
-    // console.log('result',(result)?.user?.accessToken);   //why it's not accessing accessToken
+    try {
+      const result: any = await signInWithEmailAndPassword(
+        auth,
+        val?.email,
+        val?.password
+      );
+      dispatch(storeGoogleCreds(result?.user));
+      dispatch(saveAuthToken(result?.user?.accessToken));
+      if (result?.user?.accessToken) {
+        navigate("dashboard");
+        toast.success("User logged in successfully");
+      }
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error?.message);
+    }
     // resetForm();
   };
 
+  const handleGoogle = async () => {
+    const resp: any = await signInWithPopup(auth, provider); //use async await or it dont show token
+    dispatch(saveAuthToken(resp?.user?.accessToken));
+    dispatch(storeGoogleCreds(resp?.user));
+    localStorage.setItem("authToken", JSON.stringify(resp?.user?.accessToken));
+    toast.success("User signed in successfully");
+    navigate("dashboard");
+  };
+
+  // const { signInWihGoogle }: any = UseFirebaseContextService();
   // const handleGoogle = async () => {
+  //   try {
+  //     const resp = await signInWihGoogle();
+  // const credential = GoogleAuthProvider.credentialFromResult(resp);
+  // const token = credential?.idToken;
+  //     console.log(resp?.user?.accessToken);
 
-  //   const resp = await signInWithPopup(auth, provider); //use async await or it dont show token
-  //   // directly resp in typescript doesn't give any token but can give other info
-  //   const credential = GoogleAuthProvider.credentialFromResult(resp); //it gives token
-  //   console.log('resp',resp?.user);
-  //   dispatch(storeGoogleCreds(resp))
-  //   const token = credential?.idToken;
-  //   dispatch(saveAuthToken(token));
-
-  //   localStorage.setItem("authToken", JSON.stringify(token));
-  //   if (getpersistedToken) {
+  //     dispatch(saveAuthToken(resp?.user?.accessToken));
+  //     dispatch(storeGoogleCreds(resp?.user));
+  //     console.log("resp", resp);
+  //     toast.success("User signed in successfully");
   //     navigate("dashboard");
+  //   } catch (error: any) {
+  //     toast.error(error.message);
   //   }
   // };
-
-  console.log("getpersistedToken", getpersistedToken);
-
-  const { signInWihGoogle }: any = UseFirebaseContextService();
-  const handleGoogle = async () => {
-    try {
-      const resp = await signInWihGoogle();
-      // const credential = GoogleAuthProvider.credentialFromResult(resp);
-      // const token = credential?.idToken;
-      console.log(resp?.user?.accessToken);
-
-      dispatch(saveAuthToken(resp?.user?.accessToken));
-      dispatch(storeGoogleCreds(resp?.user));
-      console.log("resp", resp);
-      toast.success("User signed in successfully");
-      navigate("dashboard");
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
-
-  const handleDispatch = () => {
-    dispatch(storeGoogleCreds(""));
-    // dispatch(storeChannelName(""));
-    // dispatch(storeChannelId(""));
-    // dispatch(storeGoogleUserImage(""));
-  };
 
   return (
     <div>
@@ -155,7 +148,6 @@ const Login = () => {
                   <Button onClick={() => navigate("signup")} type="button">
                     Signup
                   </Button>
-                  <Button onClick={handleDispatch}>Empty</Button>
                   <div
                     onClick={handleGoogle}
                     className={styles.googleContainer}

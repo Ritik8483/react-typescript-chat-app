@@ -8,8 +8,9 @@ import firebase from "firebase/compat/app";
 import { toast } from "react-toastify";
 import { saveAuthToken, storeGoogleCreds } from "../../slice/authSlice";
 import { useNavigate } from "react-router-dom";
+import { userIcon } from "../../images/icons/Logos";
 
-const RightComponent = ({ channelId, selectedChannelName }: any) => {
+const RightComponent = ({ channelId, selectedChannelName, userList }: any) => {
   const chatContentRef: any = useRef();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -41,12 +42,15 @@ const RightComponent = ({ channelId, selectedChannelName }: any) => {
       return false;
     }
     if (msgText?.length > 0) {
-      db.collection("rooms").doc(channelId).collection("messages").add({
-        message: msgText,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        user: getUserName?.displayName,
-        userImage: getUserName?.photoURL,
-      });
+      db.collection("rooms")
+        .doc(channelId)
+        .collection("messages")
+        .add({
+          message: msgText,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          user: getUserName?.displayName ? getUserName?.displayName : userList,
+          userImage: getUserName?.photoURL ? getUserName?.photoURL : userIcon,
+        });
     } else {
       toast.error("Please write something!");
     }
@@ -76,11 +80,18 @@ const RightComponent = ({ channelId, selectedChannelName }: any) => {
         <div className={styles.headerRightBoxes}>
           <div className={styles.headerRight}>
             <span className={styles.userImgSpan}>
-              <img src={getUserName?.photoURL} alt="" />
+              <img
+                src={getUserName?.photoURL ? getUserName?.photoURL : userIcon}
+                alt=""
+              />
             </span>
             <div className={styles.activeUserChannelBox}>
               <h5 className={styles.activeuserName}>
-                {getUserName.displayName}
+                {getUserName.displayName
+                  ? getUserName.displayName
+                  : userList === undefined
+                  ? "...loading"
+                  : userList}
               </h5>
               <div className={styles.activeChannelBox}>
                 <span
@@ -107,6 +118,7 @@ const RightComponent = ({ channelId, selectedChannelName }: any) => {
           submitTextMessage={submitTextMessage}
           setMsgText={setMsgText}
           roomMessages={roomMessages}
+          userList={userList}
         />
       </div>
     </div>

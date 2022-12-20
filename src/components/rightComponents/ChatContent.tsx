@@ -1,6 +1,7 @@
 import React from "react";
 import { Oval } from "react-loader-spinner";
 import { useSelector } from "react-redux";
+import { userIcon } from "../../images/icons/Logos";
 import styles from "../Dashboard.module.scss";
 import ChatInput from "./ChatInput";
 
@@ -11,9 +12,8 @@ const ChatContent = ({
   chatContentRef,
   roomMessages,
   selectedChannelName,
+  userList,
 }: any) => {
-  const userName = useSelector((state: any) => state?.authSlice?.googleCreds);
-
   return (
     <>
       <div ref={chatContentRef} className={styles.chatContainerBox}>
@@ -35,12 +35,18 @@ const ChatContent = ({
               <div key={index} className={styles.allMsgList}>
                 <div className={styles.chatImgTextBox}>
                   <div className={styles.userGoogleImg}>
-                    <img src={userImage}/>
+                    <img src={userImage ? userImage : userIcon} />
                   </div>
                   <div className={styles.anotherChatField}>{message}</div>
                 </div>
                 <div className={styles.anotherUserTextDiv}>
-                  <h6>{user}</h6>
+                  <h6>
+                    {user
+                      ? user
+                      : userList === undefined
+                      ? "...loading"
+                      : userList}
+                  </h6>
                   <p className={styles.timeText}>
                     {String(new Date(timestamp?.toDate())).split("GMT")[0] !==
                     "Invalid Date"

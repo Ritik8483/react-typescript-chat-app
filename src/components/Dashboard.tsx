@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "../components/Dashboard.module.scss";
 // import { storeChannelName } from "../slice/authSlice";
 import LeftComponent from "./leftComponents/LeftComponent";
 import RightComponent from "./rightComponents/RightComponent";
 import { useCollection } from "react-firebase-hooks/firestore";
-import { collection, getFirestore } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { db, FirebaseDatabase } from "../firebaseConfig";
 import { toast } from "react-toastify";
 
 const Dashboard = () => {
@@ -14,8 +14,7 @@ const Dashboard = () => {
   const [dropValue, setDropValue] = useState("");
   const [channelId, setChannelId] = useState("");
   const [selectedChannelName, setSelectedChannelName] = useState("");
-
-  const dispatch = useDispatch();
+  const [userList, setUserList] = useState<any>();
 
   const [channels, loading, error] = useCollection(
     collection(getFirestore(), "rooms")
@@ -39,6 +38,29 @@ const Dashboard = () => {
     setChannelId(allTheChannels?.id);
   };
 
+  const userRef = collection(FirebaseDatabase, "users");
+
+  const getUserNameToken = useSelector(
+    (state: any) => state?.authSlice?.userNameToken
+  );
+  const getUserSList = async () => {
+    try {
+      const userData: any = await getDocs(userRef);
+      const dd = userData?.docs?.map((i: any) => ({ ...i.data(), id: i.id }));
+      dd.map((da: any) => {
+        if (da?.id === getUserNameToken) {
+          return setUserList(da?.name);
+        }
+      });
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserSList();
+  }, []);
+
   return (
     <div>
       <div className={styles.dahsboardHeader}>
@@ -51,6 +73,7 @@ const Dashboard = () => {
               setChannelValue={setChannelValue}
               handleSelectChannel={handleSelectChannel}
               dropValue={dropValue}
+              userList={userList}
             />
             <div className={styles.lowerDashboard}></div>
           </div>
@@ -58,6 +81,7 @@ const Dashboard = () => {
             <RightComponent
               selectedChannelName={selectedChannelName}
               channelId={channelId}
+              userList={userList}
             />
           </div>
         </div>

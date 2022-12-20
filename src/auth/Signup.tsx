@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./Login.module.scss";
 import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
@@ -8,9 +8,18 @@ import InputField from "../reusable/InputField";
 import { toast } from "react-toastify";
 import { googleImage } from "../images/icons/Logos";
 import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
+import { FirebaseDatabase } from "../firebaseConfig";
+import { useDispatch } from "react-redux";
+import { storeUserToken } from "../slice/authSlice";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const auth = getAuth();
+  const userRef = collection(FirebaseDatabase, "users");
+
   const initialValues = {
     name: "",
     email: "",
@@ -20,14 +29,30 @@ const Signup = () => {
   const schema = yup.object().shape({
     name: yup.string().min(2).required("Name is required "),
     email: yup.string().email().required("Email is required "),
-    password: yup.string().min(5).required("Password is required "),
+    password: yup
+      .string()
+      .required("Password is required")
+      .min(8, "Password must be 8 characters long")
+      .matches(/[0-9]/, "Password requires a number")
+      .matches(/[a-z]/, "Password requires a lowercase letter")
+      .matches(/[A-Z]/, "Password requires an uppercase letter")
+      .matches(/[^\w]/, "Password requires a symbol"),
     confirmPassword: yup
       .string()
-      .min(5)
-      .required("confirmPassword is required "),
+      .oneOf([yup.ref("password"), null], "Passwords must match")
+      .required("Please confirm your password"),
   });
-  const submitForm = (val: any, { resetForm }: any) => {
-    toast.success("USer logged in successfully");
+
+  const submitForm = async (val: any, { resetForm }: any) => {
+    try {
+      const dd = await addDoc(userRef, { name: val?.name });
+      dispatch(storeUserToken(dd?.path?.split("/")[1]));
+      await createUserWithEmailAndPassword(auth, val?.email, val.password);
+      toast.success("User signed up successfully");
+      navigate(-1);
+    } catch (error: any) {
+      console.log(error?.message);
+    }
     // resetForm();
   };
   return (
@@ -114,15 +139,6 @@ const Signup = () => {
                   <Button onClick={() => navigate("/")} type="button">
                     Already have an account?Login
                   </Button>
-                  <div className={styles.googleContainer}>
-                    <img
-                      height="30"
-                      width="30"
-                      src={googleImage}
-                      alt="googleImage"
-                    />
-                    <p className="m-0">Sign in with Google</p>
-                  </div>
                 </div>
               </Form>
             )}

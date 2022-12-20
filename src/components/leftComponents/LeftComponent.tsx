@@ -1,12 +1,8 @@
-import React, { useState } from "react";
 import styles from "../Dashboard.module.scss";
 import { RiAddLine } from "react-icons/ri";
 import Dropdown from "react-bootstrap/Dropdown";
-import { useDispatch, useSelector } from "react-redux";
-import { useCollection } from "react-firebase-hooks/firestore";
-import { db } from "../../firebaseConfig";
-import { collection, getFirestore } from "firebase/firestore";
-// import { storeChannelName } from "../../slice/authSlice";
+import { useSelector } from "react-redux";
+import { userIcon } from "../../images/icons/Logos";
 
 export interface Task {
   title: string;
@@ -19,20 +15,28 @@ const LeftComponent = ({
   channels,
   dropValue,
   handleAdd,
+  userList,
 }: any) => {
   const getUserName = useSelector(
     (state: any) => state?.authSlice?.googleCreds
   );
 
-  // const getUserImg = useSelector(
-  //   (state: any) => state?.authSlice?.googleUserImage
-  // );
   return (
     <div>
       <div className={styles.leftCardHeader}>
-        <h3>Hello {getUserName?.displayName?.split(" ")[0]}</h3>
+        <h3>
+          Hello{" "}
+          {getUserName?.displayName?.split(" ")[0]
+            ? getUserName?.displayName?.split(" ")[0]
+            : userList === undefined
+            ? "...loading"
+            : userList?.split(" ")[0]}
+        </h3>
         <span>
-          <img src={getUserName?.photoURL} alt="getUserImg" />
+          <img
+            src={getUserName?.photoURL ? getUserName?.photoURL : userIcon}
+            alt="getUserImg"
+          />
         </span>
         <h6>{getUserName?.email}</h6>
       </div>

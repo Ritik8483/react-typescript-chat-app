@@ -4,6 +4,7 @@ const authSlice = createSlice({
   initialState: {
     authToken: "",
     googleCreds: "",
+    userNameToken:""
   },
   reducers: {
     saveAuthToken: (state, action) => {
@@ -12,7 +13,10 @@ const authSlice = createSlice({
     storeGoogleCreds: (state, action) => {
       state.googleCreds = action?.payload;
     },
+    storeUserToken: (state, action) => {
+      state.userNameToken = action?.payload;
+    },
   },
 });
-export const { saveAuthToken, storeGoogleCreds } = authSlice.actions;
+export const { saveAuthToken, storeGoogleCreds,storeUserToken } = authSlice.actions;
 export default authSlice.reducer;
