@@ -1,6 +1,4 @@
-import React from "react";
 import { Oval } from "react-loader-spinner";
-import { useSelector } from "react-redux";
 import { userIcon } from "../../images/icons/Logos";
 import styles from "../Dashboard.module.scss";
 import ChatInput from "./ChatInput";

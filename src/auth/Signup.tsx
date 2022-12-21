@@ -6,7 +6,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import InputField from "../reusable/InputField";
 import { toast } from "react-toastify";
-import { googleImage } from "../images/icons/Logos";
+import { googleImage, groviaLogo } from "../images/icons/Logos";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
@@ -59,7 +59,15 @@ const Signup = () => {
     <div>
       <div className={styles.loginContainer}>
         <div className={styles.loginCard}>
-          <h2>Signup</h2>
+          <div className={styles.logoDiv}>
+            <img src={groviaLogo} alt="logo" height="45px" width="45px" />
+            <h4>Grovia</h4>
+          </div>
+          <h4>Signup</h4>
+          <p>
+            Thank you for connecting with us Grovia,lets access our best
+            recommendation contact for you.
+          </p>
           <Formik
             initialValues={initialValues}
             validationSchema={schema}
@@ -136,9 +144,17 @@ const Signup = () => {
                   >
                     {isSubmitting ? "Saving..." : "Save"}
                   </Button>
-                  <Button onClick={() => navigate("/")} type="button">
-                    Already have an account?Login
-                  </Button>
+                  <div className={styles.signUpDiv}>
+                    <p>
+                      Already have an account?{" "}
+                      <a
+                        onClick={() => navigate("/")}
+                        className={styles.signUpText}
+                      >
+                        Login
+                      </a>
+                    </p>
+                  </div>
                 </div>
               </Form>
             )}

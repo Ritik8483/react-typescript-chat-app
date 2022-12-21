@@ -5,8 +5,8 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import InputField from "../reusable/InputField";
 import { toast } from "react-toastify";
-import { googleImage } from "../images/icons/Logos";
-import { useNavigate } from "react-router-dom";
+import { googleImage, groviaLogo, mobileLogo } from "../images/icons/Logos";
+import { Navigate, useNavigate } from "react-router-dom";
 import {
   getAuth,
   signInWithPopup,
@@ -39,9 +39,12 @@ const Login = () => {
       .matches(/[A-Z]/, "Password requires an uppercase letter")
       .matches(/[^\w]/, "Password requires a symbol"),
   });
-  // const getpersistedToken = useSelector(
-  //   (state: any) => state.authSlice.authToken
-  // );
+  const getpersistedToken: any = useSelector(
+    (state: any) => state.authSlice.authToken
+  );
+  const getLocalStoreToken: any = JSON.parse(
+    localStorage.getItem("authToken") || "{}"
+  );
   const submitForm = async (val: any, { resetForm }: any) => {
     try {
       const result: any = await signInWithEmailAndPassword(
@@ -71,29 +74,39 @@ const Login = () => {
     navigate("dashboard");
   };
 
-  // const { signInWihGoogle }: any = UseFirebaseContextService();
-  // const handleGoogle = async () => {
-  //   try {
-  //     const resp = await signInWihGoogle();
-  // const credential = GoogleAuthProvider.credentialFromResult(resp);
-  // const token = credential?.idToken;
-  //     console.log(resp?.user?.accessToken);
-
-  //     dispatch(saveAuthToken(resp?.user?.accessToken));
-  //     dispatch(storeGoogleCreds(resp?.user));
-  //     console.log("resp", resp);
-  //     toast.success("User signed in successfully");
-  //     navigate("dashboard");
-  //   } catch (error: any) {
-  //     toast.error(error.message);
-  //   }
-  // };
-
+  if (getLocalStoreToken && getpersistedToken) {
+    return <Navigate to="dashboard" />;
+  } 
   return (
     <div>
       <div className={styles.loginContainer}>
         <div className={styles.loginCard}>
-          <h2>Login</h2>
+          <div className={styles.logoDiv}>
+            <img src={groviaLogo} alt="logo" height="45px" width="45px" />
+            <h4>Grovia</h4>
+          </div>
+          <h4>Login</h4>
+          <p>
+            Welcome Back! login with your data that you entered during
+            registration.
+          </p>
+          <div className={styles.optionsDiv}>
+            <div
+              onClick={handleGoogle}
+              className={styles.googleParentContainer}
+            >
+              <img src={googleImage} alt="googleImage" height="23" width="23" />
+              <p className="mb-0">Sign in with Google</p>
+            </div>
+            <div
+              onClick={() => navigate("phone-auth")}
+              className={styles.mobileContainer}
+            >
+              <img src={mobileLogo} alt="mobileLogo" height="23" width="23" />
+              <p className="mb-0">Sign in with Phone number</p>
+            </div>
+          </div>
+          <span></span>
           <Formik
             initialValues={initialValues}
             validationSchema={schema}
@@ -136,29 +149,30 @@ const Login = () => {
                   error={errors.password}
                   label="Password"
                 />
+                <p
+                  onClick={() => navigate("forgot-password")}
+                  className={styles.forgotPass}
+                >
+                  Forgot Password?
+                </p>
                 <div className="d-flex flex-column gap-3 w-100 mt-4 justify-content-center">
                   <Button
                     className="w-100"
                     disabled={isSubmitting}
                     type="submit"
                   >
-                    {/* {isSubmitting ? "Saving..." : "Save"} */}
-                    Save
+                    {isSubmitting ? "Saving..." : "Save"}
                   </Button>
-                  <Button onClick={() => navigate("signup")} type="button">
-                    Signup
-                  </Button>
-                  <div
-                    onClick={handleGoogle}
-                    className={styles.googleContainer}
-                  >
-                    <img
-                      height="30"
-                      width="30"
-                      src={googleImage}
-                      alt="googleImage"
-                    />
-                    <p className="m-0">Sign in with Google</p>
+                  <div className={styles.signUpDiv}>
+                    <p>
+                      Don't have an account?{" "}
+                      <a
+                        onClick={() => navigate("signup")}
+                        className={styles.signUpText}
+                      >
+                        Signup
+                      </a>
+                    </p>
                   </div>
                 </div>
               </Form>

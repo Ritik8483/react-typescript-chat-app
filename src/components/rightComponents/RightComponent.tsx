@@ -70,6 +70,7 @@ const RightComponent = ({ channelId, selectedChannelName, userList }: any) => {
   const handleLogout = () => {
     dispatch(storeGoogleCreds(""));
     dispatch(saveAuthToken(""));
+    localStorage.setItem("authToken",JSON.stringify(''));
     toast.success("User logged out successfully");
     navigate("/");
   };

@@ -1,13 +1,13 @@
-import React, { useState,useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import styles from "../components/Dashboard.module.scss";
-// import { storeChannelName } from "../slice/authSlice";
 import LeftComponent from "./leftComponents/LeftComponent";
 import RightComponent from "./rightComponents/RightComponent";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { collection, getDocs, getFirestore } from "firebase/firestore";
 import { db, FirebaseDatabase } from "../firebaseConfig";
 import { toast } from "react-toastify";
+import { Navigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [channelValue, setChannelValue] = useState("");
@@ -60,6 +60,16 @@ const Dashboard = () => {
   useEffect(() => {
     getUserSList();
   }, []);
+  const getpersistedToken: any = useSelector(
+    (state: any) => state.authSlice.authToken
+  );
+  const getLocalStoreToken: any = JSON.parse(
+    localStorage.getItem("authToken") || "{}"
+  );
+
+  if (!(getLocalStoreToken && getpersistedToken)) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div>
