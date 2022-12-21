@@ -54,6 +54,10 @@ const Login = () => {
       );
       dispatch(storeGoogleCreds(result?.user));
       dispatch(saveAuthToken(result?.user?.accessToken));
+      localStorage.setItem(
+        "authToken",
+        JSON.stringify(result?.user?.accessToken)
+      );
       if (result?.user?.accessToken) {
         navigate("dashboard");
         toast.success("User logged in successfully");
@@ -76,7 +80,7 @@ const Login = () => {
 
   if (getLocalStoreToken && getpersistedToken) {
     return <Navigate to="dashboard" />;
-  } 
+  }
   return (
     <div>
       <div className={styles.loginContainer}>

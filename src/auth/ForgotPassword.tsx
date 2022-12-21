@@ -9,7 +9,7 @@ import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { toast } from "react-toastify";
 
 const initialValues = {
-  email: "",
+  forgotEmail: "",
 };
 
 const ForgotPassword = () => {
@@ -18,8 +18,8 @@ const ForgotPassword = () => {
 
   const submitForm = async (val: any) => {
     try {
-      const { email } = val;
-      await sendPasswordResetEmail(auth, email);
+      const { forgotEmail } = val;
+      await sendPasswordResetEmail(auth, forgotEmail);
       toast.success("Email has been sent to your registered email address");
       navigate('/');
     } catch (error: any) {
@@ -27,7 +27,7 @@ const ForgotPassword = () => {
     }
   };
   const schema = yup.object().shape({
-    email: yup.string().email().required("Email is required "),
+    forgotEmail: yup.string().email().required("Email is required "),
   });
   return (
     <div>
@@ -57,15 +57,15 @@ const ForgotPassword = () => {
               <Form className={styles.formGroup} onSubmit={handleSubmit}>
                 <InputField
                   className={styles.inputFieldClass}
-                  name="email"
+                  name="forgotEmail"
                   placeholder="name@example.com"
-                  controlId="ControlInput1"
-                  value={values.email}
+                  controlId="ControlInput0100"
+                  value={values.forgotEmail}
                   onChange={handleChange}
-                  isValid={touched.email && !errors.email}
-                  isInvalid={!!errors.email}
+                  isValid={touched.forgotEmail && !errors.forgotEmail}
+                  isInvalid={!!errors.forgotEmail}
                   type="email"
-                  error={errors.email}
+                  error={errors.forgotEmail}
                   label="Email address"
                 />
                 <p
