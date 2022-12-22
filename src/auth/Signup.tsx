@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Login.module.scss";
 import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
@@ -10,21 +10,29 @@ import { googleImage, groviaLogo } from "../images/icons/Logos";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
-import { FirebaseDatabase } from "../firebaseConfig";
+import { FirebaseDatabase, storage } from "../firebaseConfig";
 import { useDispatch } from "react-redux";
-import { storeUserToken } from "../slice/authSlice";
+import { storeUserImage, storeUserToken } from "../slice/authSlice";
+import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 
 const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const auth = getAuth();
   const userRef = collection(FirebaseDatabase, "users");
+  const imageListRef = ref(storage, "signupUserImages/");
+
+  const [userImage, setUserImage] = useState<any>("");
+  const [callUseEffect, setCallUseEffect] = useState<boolean>(false);
+  const [imageList, setImagesList] = useState<any>([]);
+  const [validated, setValidated] = useState(false);
 
   const initialValues = {
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
+    // userImage: "",
   };
   const schema = yup.object().shape({
     name: yup.string().min(2).required("Name is required "),
@@ -41,20 +49,55 @@ const Signup = () => {
       .string()
       .oneOf([yup.ref("password"), null], "Passwords must match")
       .required("Please confirm your password"),
+    // userImage: yup.string().required("Please upload your image"),
   });
 
   const submitForm = async (val: any, { resetForm }: any) => {
+    if (
+      userImage?.name === "" ||
+      userImage?.name === null ||
+      userImage?.name === undefined
+    ) {
+      setValidated(true);
+      return;
+    }
     try {
+      if (
+        userImage?.name === "" ||
+        userImage?.name === null ||
+        userImage?.name === undefined
+      ) {
+        setValidated(true);
+        return;
+      }
+      const imageRef: any = ref(storage, `signupUserImages/${userImage?.name}`);
+      uploadBytes(imageRef, userImage).then(() => {
+      });
       const dd = await addDoc(userRef, { name: val?.name });
       dispatch(storeUserToken(dd?.path?.split("/")[1]));
       await createUserWithEmailAndPassword(auth, val?.email, val.password);
+      setCallUseEffect(!callUseEffect);
       toast.success("User signed up successfully");
       navigate(-1);
     } catch (error: any) {
       console.log(error?.message);
     }
-    // resetForm();
   };
+  useEffect(() => {
+    listAll(imageListRef).then((response) => {
+      response?.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          dispatch(storeUserImage(url));
+        });
+      });
+    });
+  }, [callUseEffect]);
+
+  useEffect(() => {
+    if (userImage?.name) {
+      setValidated(false);
+    }
+  }, [userImage]);
   return (
     <div>
       <div className={styles.loginContainer}>
@@ -136,10 +179,37 @@ const Signup = () => {
                   error={errors.confirmPassword}
                   label="Confirm Password"
                 />
+                <Form.Label>Upload User Image</Form.Label>
+                <Form.Control
+                  placeholder="Please upload user image"
+                  onChange={(e: any) => {
+                    setUserImage(e.target.files[0]);
+                  }}
+                  type="file"
+                />
+                {validated ? (
+                  <p
+                    style={{
+                      color: "#dc3545",
+                      textAlign: "left",
+                      fontSize: "14px",
+                      marginTop: "3px",
+                    }}
+                  >
+                    Please upload your image
+                  </p>
+                ) : (
+                  <></>
+                )}
                 <div className="d-flex flex-column gap-3 w-100 mt-4 justify-content-center">
                   <Button
                     className="w-100"
                     disabled={isSubmitting}
+                    onClick={() => {
+                      userImage?.name
+                        ? setValidated(false)
+                        : setValidated(true);
+                    }}
                     type="submit"
                   >
                     {isSubmitting ? "Saving..." : "Save"}

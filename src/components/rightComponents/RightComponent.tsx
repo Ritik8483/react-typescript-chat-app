@@ -10,7 +10,14 @@ import { saveAuthToken, storeGoogleCreds } from "../../slice/authSlice";
 import { useNavigate } from "react-router-dom";
 import { userIcon } from "../../images/icons/Logos";
 
-const RightComponent = ({ channelId, selectedChannelName, userList }: any) => {
+const RightComponent = ({
+  channelId,
+  selectedChannelName,
+  userList,
+  signupUserImage,
+  mobUserImage,
+  mobUserName,
+}: any) => {
   const chatContentRef: any = useRef();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -48,8 +55,18 @@ const RightComponent = ({ channelId, selectedChannelName, userList }: any) => {
         .add({
           message: msgText,
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          user: getUserName?.displayName ? getUserName?.displayName : userList,
-          userImage: getUserName?.photoURL ? getUserName?.photoURL : userIcon,
+          user: getUserName?.displayName
+            ? getUserName?.displayName
+            : mobUserName
+            ? mobUserName
+            : userList,
+          userImage: getUserName?.photoURL
+            ? getUserName?.photoURL
+            : signupUserImage
+            ? signupUserImage
+            : mobUserImage
+            ? mobUserImage
+            : userIcon,
         });
     } else {
       toast.error("Please write something!");
@@ -70,7 +87,7 @@ const RightComponent = ({ channelId, selectedChannelName, userList }: any) => {
   const handleLogout = () => {
     dispatch(storeGoogleCreds(""));
     dispatch(saveAuthToken(""));
-    localStorage.setItem("authToken",JSON.stringify(''));
+    localStorage.setItem("authToken", JSON.stringify(""));
     toast.success("User logged out successfully");
     navigate("/");
   };
@@ -82,7 +99,15 @@ const RightComponent = ({ channelId, selectedChannelName, userList }: any) => {
           <div className={styles.headerRight}>
             <span className={styles.userImgSpan}>
               <img
-                src={getUserName?.photoURL ? getUserName?.photoURL : userIcon}
+                src={
+                  getUserName?.photoURL
+                    ? getUserName?.photoURL
+                    : signupUserImage
+                    ? signupUserImage
+                    : mobUserImage
+                    ? mobUserImage
+                    : userIcon
+                }
                 alt=""
               />
             </span>
@@ -90,6 +115,10 @@ const RightComponent = ({ channelId, selectedChannelName, userList }: any) => {
               <h5 className={styles.activeuserName}>
                 {getUserName.displayName
                   ? getUserName.displayName
+                  : mobUserName === undefined
+                  ? "...loading"
+                  : mobUserName
+                  ? mobUserName
                   : userList === undefined
                   ? "...loading"
                   : userList}
@@ -120,6 +149,9 @@ const RightComponent = ({ channelId, selectedChannelName, userList }: any) => {
           setMsgText={setMsgText}
           roomMessages={roomMessages}
           userList={userList}
+          signupUserImage={signupUserImage}
+          mobUserImage={mobUserImage}
+          mobUserName={mobUserName}
         />
       </div>
     </div>

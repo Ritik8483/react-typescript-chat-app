@@ -11,7 +11,11 @@ const ChatContent = ({
   roomMessages,
   selectedChannelName,
   userList,
+  signupUserImage,
+  mobUserImage,
+  mobUserName,
 }: any) => {
+
   return (
     <>
       <div ref={chatContentRef} className={styles.chatContainerBox}>
@@ -33,7 +37,17 @@ const ChatContent = ({
               <div key={index} className={styles.allMsgList}>
                 <div className={styles.chatImgTextBox}>
                   <div className={styles.userGoogleImg}>
-                    <img src={userImage ? userImage : userIcon} />
+                    <img
+                      src={
+                        userImage
+                          ? userImage
+                          : signupUserImage
+                          ? signupUserImage
+                          : mobUserImage
+                          ? mobUserImage
+                          : userIcon
+                      }
+                    />
                   </div>
                   <div className={styles.anotherChatField}>{message}</div>
                 </div>
@@ -41,6 +55,10 @@ const ChatContent = ({
                   <h6>
                     {user
                       ? user
+                      : mobUserName === undefined
+                      ? "...loading"
+                      : mobUserName
+                      ? mobUserName
                       : userList === undefined
                       ? "...loading"
                       : userList}

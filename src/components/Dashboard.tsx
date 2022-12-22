@@ -15,6 +15,9 @@ const Dashboard = () => {
   const [channelId, setChannelId] = useState("");
   const [selectedChannelName, setSelectedChannelName] = useState("");
   const [userList, setUserList] = useState<any>();
+  const [signupUserImage, setSignupUserImage] = useState("");
+  const [mobUserImage, setMobUserImage] = useState("");
+  const [mobUserName, setMobUserName] = useState<any>("");
 
   const [channels, loading, error] = useCollection(
     collection(getFirestore(), "rooms")
@@ -39,17 +42,45 @@ const Dashboard = () => {
   };
 
   const userRef = collection(FirebaseDatabase, "users");
+  const userMobileRef = collection(FirebaseDatabase, "mobileUsers");
 
   const getUserNameToken = useSelector(
     (state: any) => state?.authSlice?.userNameToken
   );
+  const getMobileNameToken = useSelector(
+    (state: any) => state?.authSlice?.mobileUserToken
+  );
+  const getSignupUserImage = useSelector(
+    (state: any) => state?.authSlice?.signupUserImg
+  );
+  const getMobileUserImg = useSelector(
+    (state: any) => state?.authSlice?.mobileUserImg
+  );
+
   const getUserSList = async () => {
     try {
       const userData: any = await getDocs(userRef);
       const dd = userData?.docs?.map((i: any) => ({ ...i.data(), id: i.id }));
-      dd.map((da: any) => {
+      dd?.map((da: any) => {
         if (da?.id === getUserNameToken) {
           return setUserList(da?.name);
+        }
+      });
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+  const getMobileUserSList = async () => {
+    try {
+      const userMobData: any = await getDocs(userMobileRef);
+      const datas = userMobData?.docs?.map((i: any) => ({
+        ...i.data(),
+        id: i.id,
+      }));
+
+      datas?.map((da: any) => {
+        if (da?.id === getMobileNameToken) {
+          return setMobUserName(da?.name);
         }
       });
     } catch (error: any) {
@@ -59,7 +90,11 @@ const Dashboard = () => {
 
   useEffect(() => {
     getUserSList();
+    getMobileUserSList();
+    setSignupUserImage(getSignupUserImage);
+    setMobUserImage(getMobileUserImg);
   }, []);
+
   const getpersistedToken: any = useSelector(
     (state: any) => state.authSlice.authToken
   );
@@ -84,6 +119,9 @@ const Dashboard = () => {
               handleSelectChannel={handleSelectChannel}
               dropValue={dropValue}
               userList={userList}
+              signupUserImage={signupUserImage}
+              mobUserImage={mobUserImage}
+              mobUserName={mobUserName}
             />
             <div className={styles.lowerDashboard}></div>
           </div>
@@ -92,6 +130,9 @@ const Dashboard = () => {
               selectedChannelName={selectedChannelName}
               channelId={channelId}
               userList={userList}
+              signupUserImage={signupUserImage}
+              mobUserImage={mobUserImage}
+              mobUserName={mobUserName}
             />
           </div>
         </div>

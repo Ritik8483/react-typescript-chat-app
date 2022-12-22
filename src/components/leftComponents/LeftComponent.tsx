@@ -16,9 +16,15 @@ const LeftComponent = ({
   dropValue,
   handleAdd,
   userList,
+  signupUserImage,
+  mobUserImage,
+  mobUserName,
 }: any) => {
   const getUserName = useSelector(
     (state: any) => state?.authSlice?.googleCreds
+  );
+  const getMobileNo = useSelector(
+    (state: any) => state?.authSlice?.mobileUserNumber
   );
 
   return (
@@ -28,17 +34,29 @@ const LeftComponent = ({
           Hello{" "}
           {getUserName?.displayName?.split(" ")[0]
             ? getUserName?.displayName?.split(" ")[0]
+            : mobUserName === undefined
+            ? "...loading"
+            : mobUserName?.split(" ")[0]
+            ? mobUserName?.split(" ")[0]
             : userList === undefined
             ? "...loading"
             : userList?.split(" ")[0]}
         </h3>
         <span>
           <img
-            src={getUserName?.photoURL ? getUserName?.photoURL : userIcon}
+            src={
+              getUserName?.photoURL
+                ? getUserName?.photoURL
+                : signupUserImage
+                ? signupUserImage
+                : mobUserImage
+                ? mobUserImage
+                : userIcon
+            }
             alt="getUserImg"
           />
         </span>
-        <h6>{getUserName?.email}</h6>
+        <h6>{getUserName?.email ? getUserName?.email : getMobileNo}</h6>
       </div>
       <div className={styles.chatContainer}>
         <div className={styles.addChannelBox}>
