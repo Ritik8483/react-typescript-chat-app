@@ -28,7 +28,7 @@ const LeftComponent = ({
   );
 
   return (
-    <div>
+    <div style={{ height: "calc(100% - 80px)", overflowY: "auto" }}>
       <div className={styles.leftCardHeader}>
         <h3>
           Hello{" "}

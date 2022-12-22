@@ -77,8 +77,7 @@ const MobileAuth = () => {
         storage,
         `mobileUserImages/${imageInput?.name}`
       );
-      uploadBytes(imageReference, imageInput).then(() => {
-      });
+      uploadBytes(imageReference, imageInput).then(() => {});
       const res: any = await signInWithPhoneNumber(
         auth,
         value,
@@ -97,7 +96,7 @@ const MobileAuth = () => {
     }
     try {
       const resp = await mobileToken.confirm(mobileOTP);
-      dispatch(storeMobileUserNumber(resp?.user?.phoneNumber))
+      dispatch(storeMobileUserNumber(resp?.user?.phoneNumber));
       dispatch(saveAuthToken(resp?.user?.accessToken));
       localStorage.setItem(
         "authToken",
@@ -160,7 +159,7 @@ const MobileAuth = () => {
                 onChange={(e: any) => setMobileOTP(e.target.value)}
                 type="password"
               />
-              <Button className="w-100 mt-4" type="submit">
+              <Button className="w-100 mt-4 mb-3" type="submit">
                 Verify OTP
               </Button>
             </Form>
@@ -171,7 +170,7 @@ const MobileAuth = () => {
               className={styles.formGroup}
               onSubmit={(e: any) => submitForm(e)}
             >
-              <Form.Group as={Col} md="6" controlId="validationCustom03">
+              <Form.Group controlId="validationCustom03">
                 <Form.Label>Name</Form.Label>
                 <Form.Control
                   type="text"
@@ -184,12 +183,7 @@ const MobileAuth = () => {
                   Please enter your name.
                 </Form.Control.Feedback>
               </Form.Group>
-              <Form.Group
-                as={Col}
-                md="6"
-                className="mt-3"
-                controlId="validationCustom0300"
-              >
+              <Form.Group className="mt-3" controlId="validationCustom0300">
                 <Form.Label>Upload User Image</Form.Label>
                 <Form.Control
                   type="file"
@@ -232,7 +226,7 @@ const MobileAuth = () => {
               >
                 Back to Login
               </p>
-              <Button className="w-100" type="submit">
+              <Button className="w-100 mb-3" type="submit">
                 Send OTP
               </Button>
             </Form>

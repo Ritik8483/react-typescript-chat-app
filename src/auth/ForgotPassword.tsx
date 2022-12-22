@@ -74,7 +74,7 @@ const ForgotPassword = () => {
                 >
                   Back to Login
                 </p>
-                <Button disabled={isSubmitting} className="w-100" type="submit">
+                <Button disabled={isSubmitting} className="w-100 mb-3" type="submit">
                 {isSubmitting ? "Saving..." : "Save"}
                 </Button>
               </Form>

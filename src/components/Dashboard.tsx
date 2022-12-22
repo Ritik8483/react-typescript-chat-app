@@ -34,7 +34,7 @@ const Dashboard = () => {
     }
     setChannelValue("");
   };
-  let selectedChannelByname = "";
+  
   const handleSelectChannel = (allTheChannels: any) => {
     setDropValue(allTheChannels?.data()?.name);
     setSelectedChannelName(allTheChannels?.data()?.name);
