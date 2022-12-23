@@ -17,6 +17,7 @@ import { UseFirebaseContextService } from "../firebase/FirebaseService";
 import { auth } from "../firebaseConfig";
 import { useDispatch, useSelector } from "react-redux/es/exports";
 import { saveAuthToken, storeGoogleCreds } from "../slice/authSlice";
+import { useEffect } from "react";
 
 const Login = () => {
   const dispatch: any = useDispatch();
@@ -45,28 +46,33 @@ const Login = () => {
   const getLocalStoreToken: any = JSON.parse(
     localStorage.getItem("authToken") || "{}"
   );
-  const submitForm = async (val: any, { resetForm }: any) => {
+
+  const submitForm = async (val: any) => {
+    const auth = getAuth();
     try {
-      const result: any = await signInWithEmailAndPassword(
-        auth,
-        val?.email,
-        val?.password
-      );
-      dispatch(storeGoogleCreds(result?.user));
-      dispatch(saveAuthToken(result?.user?.accessToken));
-      localStorage.setItem(
-        "authToken",
-        JSON.stringify(result?.user?.accessToken)
-      );
-      if (result?.user?.accessToken) {
-        navigate("dashboard");
-        toast.success("User logged in successfully");
+      if (auth?.currentUser?.emailVerified) {
+        const result: any = await signInWithEmailAndPassword(
+          auth,
+          val?.email,
+          val?.password
+        );
+        dispatch(storeGoogleCreds(result?.user));
+        dispatch(saveAuthToken(result?.user?.accessToken));
+        localStorage.setItem(
+          "authToken",
+          JSON.stringify(result?.user?.accessToken)
+        );
+        if (result?.user?.accessToken) {
+          navigate("dashboard");
+          toast.success("User logged in successfully");
+        }
+      } else {
+        toast.error("E-mail address is not verified!");
       }
     } catch (error: any) {
       console.log(error);
       toast.error(error?.message);
     }
-    // resetForm();
   };
 
   const handleGoogle = async () => {
@@ -80,6 +86,9 @@ const Login = () => {
 
   if (getLocalStoreToken && getpersistedToken) {
     return <Navigate to="dashboard" />;
+  }
+  const handleEmailLink=()=>{
+    navigate('email-link')
   }
   return (
     <div>
@@ -175,6 +184,14 @@ const Login = () => {
                         className={styles.signUpText}
                       >
                         Signup
+                      </a>
+                    </p>
+                    <p>
+                      <a
+                        onClick={() => handleEmailLink()}
+                        className={styles.signUpText}
+                      >
+                        Email link authentication
                       </a>
                     </p>
                   </div>

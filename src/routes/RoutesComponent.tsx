@@ -7,6 +7,7 @@ const Dashboard = lazy(() => import("../components/Dashboard"));
 const ProtectedRoutes = lazy(() => import("./ProtectedRoutes"));
 const ForgotPassword = lazy(() => import("../auth/ForgotPassword"));
 const MobileAuth = lazy(() => import("../auth/MobileAuth"));
+const EmailLinkAuth = lazy(() => import("../auth/EmailLinkAuth"));
 
 const RoutesComponent = () => {
   const routeElement = useRoutes([
@@ -26,6 +27,7 @@ const RoutesComponent = () => {
     },
     { path: "forgot-password", element: <ForgotPassword /> },
     { path: "phone-auth", element: <MobileAuth /> },
+    { path: "email-link", element: <EmailLinkAuth /> },
     // { path: "*", element: <Navigate to={<Login />} /> },
   ]);
   return routeElement;

@@ -8,7 +8,12 @@ import InputField from "../reusable/InputField";
 import { toast } from "react-toastify";
 import { googleImage, groviaLogo } from "../images/icons/Logos";
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  sendEmailVerification,
+  sendSignInLinkToEmail,
+} from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
 import { FirebaseDatabase, storage } from "../firebaseConfig";
 import { useDispatch } from "react-redux";
@@ -18,7 +23,7 @@ import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const auth = getAuth();
+  const auth: any = getAuth();
   const userRef = collection(FirebaseDatabase, "users");
   const imageListRef = ref(storage, "signupUserImages/");
 
@@ -49,7 +54,6 @@ const Signup = () => {
       .string()
       .oneOf([yup.ref("password"), null], "Passwords must match")
       .required("Please confirm your password"),
-    // userImage: yup.string().required("Please upload your image"),
   });
 
   const submitForm = async (val: any, { resetForm }: any) => {
@@ -71,15 +75,22 @@ const Signup = () => {
         return;
       }
       const imageRef: any = ref(storage, `signupUserImages/${userImage?.name}`);
-      uploadBytes(imageRef, userImage).then(() => {
-      });
+      uploadBytes(imageRef, userImage).then(() => {});
       const dd = await addDoc(userRef, { name: val?.name });
       dispatch(storeUserToken(dd?.path?.split("/")[1]));
-      await createUserWithEmailAndPassword(auth, val?.email, val.password);
+      const signupResult: any = await createUserWithEmailAndPassword(
+        auth,
+        val?.email,
+        val.password
+      );
+      const resp: any = await sendEmailVerification(auth?.currentUser);
       setCallUseEffect(!callUseEffect);
-      toast.success("User signed up successfully");
+      toast.success(
+        "Signup Successful,please check your mail we have sent your an verification link"
+      );
       navigate(-1);
     } catch (error: any) {
+      toast.error(error?.message);
       console.log(error?.message);
     }
   };
