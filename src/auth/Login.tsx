@@ -21,6 +21,8 @@ import {
   signInWithEmailAndPassword,
   signInWithRedirect,
   getRedirectResult,
+  GithubAuthProvider,
+  OAuthProvider,
 } from "firebase/auth";
 import { UseFirebaseContextService } from "../firebase/FirebaseService";
 import { auth } from "../firebaseConfig";
@@ -35,6 +37,8 @@ const Login = () => {
   const auth = getAuth(); //don't use this auth use firebaseConfig auth in contextApi,use in direct
   const provider = new GoogleAuthProvider();
   const fbProvider = new FacebookAuthProvider();
+  const gitProvider = new GithubAuthProvider();
+  const microProvider = new OAuthProvider("microsoft.com");
 
   const initialValues = {
     email: "",
@@ -101,9 +105,8 @@ const Login = () => {
   const handleEmailLink = () => {
     navigate("email-link");
   };
-  const handleFb = () => {
-    const fbProvider = new FacebookAuthProvider();
-    signInWithPopup(auth, fbProvider)
+  const handleFb = async () => {
+    await signInWithPopup(auth, fbProvider)
       .then((result: any) => {
         dispatch(saveAuthToken(result?.user?.accessToken));
         dispatch(storeGoogleCreds(result?.user));
@@ -115,6 +118,39 @@ const Login = () => {
       })
       .catch((error) => {
         console.log(error);
+        toast.error(error.message);
+      });
+  };
+  const handleGithub = async () => {
+    const gitVar = await signInWithPopup(auth, gitProvider)
+      .then((result: any) => {
+        dispatch(saveAuthToken(result?.user?.accessToken));
+        dispatch(storeGoogleCreds(result?.user));
+        localStorage.setItem(
+          "authToken",
+          JSON.stringify(result?.user?.accessToken)
+        );
+        navigate("dashboard");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.message);
+      });
+  };
+  const handleMicrosoft = async () => {
+    await signInWithPopup(auth, microProvider)
+      .then((result: any) => {
+        dispatch(saveAuthToken(result?.user?.accessToken));
+        dispatch(storeGoogleCreds(result?.user));
+        localStorage.setItem(
+          "authToken",
+          JSON.stringify(result?.user?.accessToken)
+        );
+        navigate("dashboard");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.message);
       });
   };
   return (
@@ -151,11 +187,11 @@ const Login = () => {
               <img src={facebook} alt="mobileLogo" height="26" width="26" />
               <p className="mb-0">Facebook</p>
             </div>
-            <div className={styles.otherBox}>
+            <div onClick={handleMicrosoft} className={styles.otherBox}>
               <img src={microsoft} alt="mobileLogo" height="26" width="26" />
               <p className="mb-0">Microsoft</p>
             </div>
-            <div className={styles.otherBox}>
+            <div onClick={handleGithub} className={styles.otherBox}>
               <img src={github} alt="mobileLogo" height="26" width="26" />
               <p className="mb-0">Github</p>
             </div>
