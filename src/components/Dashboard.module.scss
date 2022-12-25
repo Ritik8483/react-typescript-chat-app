@@ -158,9 +158,9 @@
   background-color: whitesmoke;
   padding-right: 10px;
   cursor: pointer;
-  > :hover {
-    color: green;
-  }
+}
+.logoutText:hover{
+  color: green;
 }
 .chatContainerBox {
   height: calc(100vh - 160px);

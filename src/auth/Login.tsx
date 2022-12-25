@@ -5,25 +5,36 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import InputField from "../reusable/InputField";
 import { toast } from "react-toastify";
-import { googleImage, groviaLogo, mobileLogo } from "../images/icons/Logos";
+import {
+  facebook,
+  github,
+  googleImage,
+  groviaLogo,
+  microsoft,
+  mobileLogo,
+} from "../images/icons/Logos";
 import { Navigate, useNavigate } from "react-router-dom";
 import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
+  signInWithRedirect,
+  getRedirectResult,
 } from "firebase/auth";
 import { UseFirebaseContextService } from "../firebase/FirebaseService";
 import { auth } from "../firebaseConfig";
 import { useDispatch, useSelector } from "react-redux/es/exports";
 import { saveAuthToken, storeGoogleCreds } from "../slice/authSlice";
 import { useEffect } from "react";
+import { FacebookAuthProvider } from "firebase/auth";
 
 const Login = () => {
   const dispatch: any = useDispatch();
   const navigate = useNavigate();
   const auth = getAuth(); //don't use this auth use firebaseConfig auth in contextApi,use in direct
   const provider = new GoogleAuthProvider();
+  const fbProvider = new FacebookAuthProvider();
 
   const initialValues = {
     email: "",
@@ -87,9 +98,25 @@ const Login = () => {
   if (getLocalStoreToken && getpersistedToken) {
     return <Navigate to="dashboard" />;
   }
-  const handleEmailLink=()=>{
-    navigate('email-link')
-  }
+  const handleEmailLink = () => {
+    navigate("email-link");
+  };
+  const handleFb = () => {
+    const fbProvider = new FacebookAuthProvider();
+    signInWithPopup(auth, fbProvider)
+      .then((result: any) => {
+        dispatch(saveAuthToken(result?.user?.accessToken));
+        dispatch(storeGoogleCreds(result?.user));
+        localStorage.setItem(
+          "authToken",
+          JSON.stringify(result?.user?.accessToken)
+        );
+        navigate("dashboard");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <div>
       <div className={styles.loginContainer}>
@@ -117,6 +144,20 @@ const Login = () => {
             >
               <img src={mobileLogo} alt="mobileLogo" height="23" width="23" />
               <p className="mb-0">Sign in with Phone number</p>
+            </div>
+          </div>
+          <div className={styles.otherOpt}>
+            <div onClick={handleFb} className={styles.otherBox}>
+              <img src={facebook} alt="mobileLogo" height="26" width="26" />
+              <p className="mb-0">Facebook</p>
+            </div>
+            <div className={styles.otherBox}>
+              <img src={microsoft} alt="mobileLogo" height="26" width="26" />
+              <p className="mb-0">Microsoft</p>
+            </div>
+            <div className={styles.otherBox}>
+              <img src={github} alt="mobileLogo" height="26" width="26" />
+              <p className="mb-0">Github</p>
             </div>
           </div>
           <span></span>

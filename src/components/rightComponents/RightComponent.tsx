@@ -38,6 +38,8 @@ const RightComponent = ({
         .collection("messages")
         .orderBy("timestamp", "asc")
   );
+  console.log(roomMessages);
+  
 
   const submitTextMessage = (e: any) => {
     e.preventDefault();
@@ -138,7 +140,7 @@ const RightComponent = ({
               </div>
             </div>
           </div>
-          <h5 onClick={handleLogout}>Logout</h5>
+          <h5 className={styles.logoutText} onClick={handleLogout}>Logout</h5>
         </div>
 
         <ChatContent
